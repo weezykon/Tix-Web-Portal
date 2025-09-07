@@ -214,9 +214,9 @@
               <button
                 type="submit"
                 class="btn-submit"
-                :disabled="isSubmitting || !isFormValid"
+                :disabled="createTicketLoading || !isFormValid"
               >
-                {{ isSubmitting ? 'Creating Ticket...' : 'Create Ticket' }}
+                {{ createTicketLoading ? 'Creating Ticket...' : 'Create Ticket' }}
               </button>
             </div>
           </form>
@@ -289,12 +289,41 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { gql } from 'graphql-tag'
+import { useMutation } from '@vue/apollo-composable'
+import { useAppToast } from '../composables/useToast'
 
 const router = useRouter()
+const { showSuccessToast, showErrorToast } = useAppToast()
 
 const isSubmitting = ref(false)
 const isDragOver = ref(false)
 const fileInput = ref<HTMLInputElement>()
+
+const CREATE_TICKET_MUTATION = gql`
+  mutation CreateTicket(
+    $description: String!
+    $priority: String!
+    $department: String!
+    $subject: String!
+  ) {
+    createTicket(
+      description: $description
+      priority: $priority
+      department: $department
+      subject: $subject
+    ) {
+      id
+      title
+      description
+      priority
+      department
+      subject
+    }
+  }
+`
+
+const { mutate: createTicket, loading: createTicketLoading } = useMutation(CREATE_TICKET_MUTATION)
 
 const form = ref({
   subject: '',
@@ -494,22 +523,27 @@ const submitTicket = async () => {
   isSubmitting.value = true
 
   try {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    const result = await createTicket({
+      title: form.value.subject,
+      description: form.value.description,
+      priority: form.value.priority,
+      department: form.value.department,
+      subject: form.value.subject
+    })
 
-    // Create ticket data
-    const ticketData = {
-      ...form.value,
-      files: uploadedFiles.value.filter(f => f.uploaded),
-      createdAt: new Date().toISOString()
+    if (result && result.data && result.data.createTicket) {
+      showSuccessToast('Ticket created successfully!')
+      router.push('/tickets')
+    } else {
+      showErrorToast('Failed to create ticket.')
     }
-
-    console.log('Creating ticket:', ticketData)
-
-    // Redirect to tickets list or ticket detail
-    router.push('/tickets')
   } catch (error) {
     console.error('Failed to create ticket:', error)
+    if (error instanceof Error) {
+      showErrorToast(`Error creating ticket: ${error.message}`)
+    } else {
+      showErrorToast(`Error creating ticket: ${String(error)}`)
+    }
   } finally {
     isSubmitting.value = false
   }
