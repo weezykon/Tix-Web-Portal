@@ -150,6 +150,7 @@ const TICKETS_QUERY = gql`
       description
       id
       status
+      priority
       title
       assignedAgent {
         name
