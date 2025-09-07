@@ -25,12 +25,12 @@
         <div class="user-profile">
           <img
             class="user-avatar"
-            src="https://via.placeholder.com/32x32/8B5CF6/FFFFFF?text=SM"
+            :src="userProfile.avatar"
             alt="Profile"
           />
           <div class="user-info">
-            <p class="user-name">Sophie Minders</p>
-            <p class="user-handle">@sophie</p>
+            <p class="user-name">{{ userProfile.name }}</p>
+            <p class="user-handle">{{ userProfile.handle }}</p>
           </div>
         </div>
         <nav class="nav">
@@ -68,14 +68,24 @@
 
         <!-- Tickets List -->
         <div class="tickets-list">
-          <div v-for="ticket in tickets" :key="ticket.id" class="ticket-card">
+          <div v-if="loading">Loading...</div>
+          <div v-if="error">Error: {{ error.message }}</div>
+          <div v-if="tickets.length === 0" class="empty-state">
+            <svg class="empty-state-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <p class="empty-state-text">No tickets found.</p>
+            <p class="empty-state-subtext">It looks like you haven't created any tickets yet.</p>
+            <button class="btn-primary empty-state-button">Create your first ticket</button>
+          </div>
+          <div v-else v-for="ticket in tickets" :key="ticket.id" class="ticket-card">
             <div class="ticket-content">
               <div class="ticket-main">
                 <h3 class="ticket-title">{{ ticket.title }}</h3>
                 <p class="ticket-description">{{ ticket.description }}</p>
 
                 <div class="ticket-meta">
-                  <span class="ticket-id">#{{ ticket.ticketId }}</span>
+                  <span class="ticket-id">#{{ ticket.id }}</span>
                   <div class="comments">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <path
@@ -85,12 +95,9 @@
                         d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                       />
                     </svg>
-                    <span>{{ ticket.comments }}</span>
+                    <span>{{ ticket.comments.length }}</span>
                   </div>
                 </div>
-              </div>
-              <div class="ticket-time">
-                <p>{{ ticket.time }}</p>
               </div>
             </div>
           </div>
@@ -101,7 +108,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { gql } from 'graphql-tag'
+import { useQuery } from '@vue/apollo-composable'
 
 const isMobileMenuOpen = ref(false)
 
@@ -109,48 +118,52 @@ const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value
 }
 
-const tickets = ref([
-  {
-    id: 1,
-    title: 'Cannot access the system',
-    description:
-      'Life seasons open have. Air have of. Lights fill after let third darkness replenish fruitful let. Wherein set image. Creepeth said above gathered bring.',
-    priority: 'Urgent',
-    ticketId: 'MK32',
-    comments: 2,
-    time: '3h ago',
-  },
-  {
-    id: 2,
-    title: 'Refund not initiated',
-    description:
-      'Life seasons open have. Air have of. Lights fill after let third darkness replenish fruitful let. Wherein set image. Creepeth said above gathered bring.',
-    priority: 'Medium',
-    ticketId: 'FO49',
-    comments: 2,
-    time: 'Oct 12',
-  },
-  {
-    id: 3,
-    title: 'Free delivery',
-    description:
-      'Life seasons open have. Air have of. Lights fill after let third darkness replenish fruitful let. Wherein set image. Creepeth said above gathered bring.',
-    priority: 'Low',
-    ticketId: 'EE23',
-    comments: 2,
-    time: 'Oct 13',
-  },
-  {
-    id: 4,
-    title: 'Issue with finding information about order',
-    description:
-      'Life seasons open have. Air have of. Lights fill after let third darkness replenish fruitful let. Wherein set image. Creepeth said above gathered bring.',
-    priority: 'Medium',
-    ticketId: 'OR15',
-    comments: 1,
-    time: 'Oct 13',
-  },
-])
+const userProfile = ref({
+  name: 'Sophie Minders',
+  handle: '@sophie',
+  avatar: 'https://via.placeholder.com/32x32/8B5CF6/FFFFFF?text=SM'
+})
+
+onMounted(() => {
+  const storedUser = localStorage.getItem('user')
+  if (storedUser) {
+    try {
+      const user = JSON.parse(storedUser)
+      userProfile.value.name = user.name || 'Guest User'
+      userProfile.value.handle = user.handle || `@${user.name?.toLowerCase().replace(/\s/g, '') || 'guest'}`
+      userProfile.value.avatar = user.avatar || 'https://via.placeholder.com/32x32/8B5CF6/FFFFFF?text=SM'
+    } catch (e) {
+      console.error('Failed to parse user data from localStorage', e)
+    }
+  }
+})
+
+const TICKETS_QUERY = gql`
+  query Tickets {
+    tickets {
+      description
+      id
+      status
+      title
+      assignedAgent {
+        name
+        id
+      }
+      user {
+        id
+        name
+      }
+      comments {
+        content
+        id
+      }
+    }
+  }
+`
+
+const { result, loading, error } = useQuery(TICKETS_QUERY)
+
+const tickets = computed(() => result.value?.tickets ?? [])
 </script>
 
 <style scoped>
@@ -622,6 +635,44 @@ const tickets = ref([
 
 .show-more-btn:hover {
   color: #7c3aed;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  text-align: center;
+  color: #6b7280;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-top: 1.5rem;
+}
+
+.empty-state-icon {
+  width: 4rem;
+  height: 4rem;
+  color: #d1d5db;
+  margin-bottom: 1rem;
+}
+
+.empty-state-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #111827;
+}
+
+.empty-state-subtext {
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+}
+
+.empty-state-button {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
 }
 
 /* Responsive Design */
