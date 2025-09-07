@@ -55,7 +55,7 @@
       <div class="tickets-section">
         <div class="header">
           <h1 class="page-title">Tickets</h1>
-          <button class="btn-primary">New ticket</button>
+          <button class="btn-primary" @click="goToCreateTicket">New ticket</button>
         </div>
 
         <!-- Ticket Tabs -->
@@ -76,7 +76,7 @@
             </svg>
             <p class="empty-state-text">No tickets found.</p>
             <p class="empty-state-subtext">It looks like you haven't created any tickets yet.</p>
-            <button class="btn-primary empty-state-button">Create your first ticket</button>
+            <button class="btn-primary empty-state-button" @click="goToCreateTicket">Create your first ticket</button>
           </div>
           <div v-else v-for="ticket in tickets" :key="ticket.id" class="ticket-card">
             <div class="ticket-content">
@@ -109,13 +109,19 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router' // Import useRouter
 import { gql } from 'graphql-tag'
 import { useQuery } from '@vue/apollo-composable'
 
 const isMobileMenuOpen = ref(false)
+const router = useRouter() // Initialize router
 
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value
+}
+
+const goToCreateTicket = () => {
+  router.push('/create-ticket')
 }
 
 const userProfile = ref({

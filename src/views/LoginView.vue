@@ -56,7 +56,9 @@
           </div>
 
           <div class="submit-section">
-            <button type="submit" class="submit-button" @click="handleSubmit">Next step</button>
+            <button type="submit" class="submit-button" @click="handleSubmit" :disabled="isLoading">
+  {{ isLoading ? 'Logging in...' : 'Next step' }}
+</button>
           </div>
         </div>
 
@@ -77,17 +79,37 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { ref } from 'vue';
+import { useRouter, RouterLink } from 'vue-router'; // Import useRouter and RouterLink
+import { useAuthStore } from '../stores/auth'; // Import useAuthStore
+import { useAppToast } from '../composables/useToast';
 
-const email = ref('')
-const password = ref('')
+const email = ref('');
+const password = ref('');
+const isLoading = ref(false); // New loading state
+const authStore = useAuthStore(); // Initialize the auth store
+const router = useRouter(); // Initialize the router
+const { showSuccessToast, showErrorToast } = useAppToast();
 
-const handleSubmit = (e: Event) => {
-  e.preventDefault()
-  console.log('Login attempt:', { email: email.value, password: password.value })
-  // Add your login logic here
-}
+const handleSubmit = async (e: Event) => {
+  e.preventDefault();
+  isLoading.value = true; // Set loading to true
+
+  try {
+    const success = await authStore.login(email.value, password.value);
+    if (success) {
+      showSuccessToast('Login successful!');
+      router.push('/'); // Redirect to home on successful login
+    } else {
+      showErrorToast('Login failed. Please check your credentials.');
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    showErrorToast('An unexpected error occurred during login.');
+  } finally {
+    isLoading.value = false; // Set loading to false regardless of outcome
+  }
+};
 </script>
 
 <style scoped>

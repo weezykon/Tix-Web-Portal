@@ -16,12 +16,17 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@apollo/client": "^3.8.10",
+    "@vue/apollo-composable": "^4.2.2",
     "autoprefixer": "^10.4.21",
+    "graphql": "^16.11.0",
     "pinia": "^3.0.3",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.13",
     "vue": "^3.5.18",
-    "vue-router": "^4.5.1"
+    "vue-apollo": "^3.1.2",
+    "vue-router": "^4.5.1",
+    "vue-toastification": "^2.0.0-rc.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.13",
