@@ -624,6 +624,7 @@ const submitTicket = async () => {
   border-radius: 0.5rem;
   font-size: 0.875rem;
   transition: all 0.2s;
+  color: #111827;
 }
 
 .form-input::placeholder,
