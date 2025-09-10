@@ -77,10 +77,7 @@
                     class="priority-radio"
                   />
                   <div class="priority-content">
-                    <span
-                      class="priority-badge"
-                      :class="getPriorityClass(priority.value)"
-                    >
+                    <span class="priority-badge" :class="getPriorityClass(priority.value)">
                       {{ priority.label }}
                     </span>
                     <span class="priority-description">{{ priority.description }}</span>
@@ -113,7 +110,8 @@
             <div class="form-group">
               <label class="form-label">Attachments</label>
               <p class="form-help-text">
-                Upload images (PNG, JPG, GIF) or PDF files to help explain your issue. Maximum 5 files, 10MB each.
+                Upload images (PNG, JPG, GIF) or PDF files to help explain your issue. Maximum 5
+                files, 10MB each.
               </p>
 
               <!-- File Upload Area -->
@@ -121,7 +119,7 @@
                 class="file-upload-area"
                 :class="{
                   'file-upload-dragover': isDragOver,
-                  'file-upload-error': errors.files
+                  'file-upload-error': errors.files,
                 }"
                 @drop.prevent="handleDrop"
                 @dragover.prevent="isDragOver = true"
@@ -138,8 +136,18 @@
                 />
 
                 <div class="file-upload-content">
-                  <svg class="file-upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  <svg
+                    class="file-upload-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                    />
                   </svg>
                   <p class="file-upload-text">
                     <span class="file-upload-action">Click to upload</span> or drag and drop
@@ -150,18 +158,29 @@
 
               <!-- Uploaded Files List -->
               <div v-if="uploadedFiles.length > 0" class="uploaded-files">
-                <div
-                  v-for="(file, index) in uploadedFiles"
-                  :key="index"
-                  class="uploaded-file"
-                >
+                <div v-for="(file, index) in uploadedFiles" :key="index" class="uploaded-file">
                   <div class="file-info">
                     <div class="file-icon">
-                      <svg v-if="file.type.startsWith('image/')" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      <svg
+                        v-if="file.type.startsWith('image/')"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
                       </svg>
                       <svg v-else fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
                       </svg>
                     </div>
                     <div class="file-details">
@@ -173,10 +192,7 @@
                   <!-- Upload Progress -->
                   <div v-if="file.uploading" class="file-progress">
                     <div class="progress-bar">
-                      <div
-                        class="progress-fill"
-                        :style="{ width: file.progress + '%' }"
-                      ></div>
+                      <div class="progress-fill" :style="{ width: file.progress + '%' }"></div>
                     </div>
                     <span class="progress-text">{{ file.progress }}%</span>
                   </div>
@@ -184,7 +200,12 @@
                   <!-- Upload Complete -->
                   <div v-else-if="file.uploaded" class="file-status file-success">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                     <span>Uploaded</span>
                   </div>
@@ -197,7 +218,12 @@
                     :disabled="file.uploading"
                   >
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
                     </svg>
                   </button>
                 </div>
@@ -208,9 +234,7 @@
 
             <!-- Form Actions -->
             <div class="form-actions">
-              <router-link to="/tickets" class="btn-cancel">
-                Cancel
-              </router-link>
+              <router-link to="/tickets" class="btn-cancel"> Cancel </router-link>
               <button
                 type="submit"
                 class="btn-submit"
@@ -230,7 +254,12 @@
           <div class="help-tips">
             <div class="help-tip">
               <svg class="help-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
               <div>
                 <h4>Be Specific</h4>
@@ -240,7 +269,12 @@
 
             <div class="help-tip">
               <svg class="help-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
               </svg>
               <div>
                 <h4>Attach Screenshots</h4>
@@ -250,7 +284,12 @@
 
             <div class="help-tip">
               <svg class="help-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
               <div>
                 <h4>Choose Priority Wisely</h4>
@@ -302,19 +341,12 @@ const fileInput = ref<HTMLInputElement>()
 
 const CREATE_TICKET_MUTATION = gql`
   mutation CreateTicket(
-    $description: String!
-    $priority: String!
-    $department: String!
-    $subject: String!
+    $input: CreateTicketInput!
   ) {
     createTicket(
-      description: $description
-      priority: $priority
-      department: $department
-      subject: $subject
+      input: $input
     ) {
       id
-      title
       description
       priority
       department
@@ -329,18 +361,20 @@ const form = ref({
   subject: '',
   department: '',
   priority: '',
-  description: ''
+  description: '',
 })
 
-const uploadedFiles = ref<Array<{
-  name: string
-  size: number
-  type: string
-  file: File
-  uploading: boolean
-  uploaded: boolean
-  progress: number
-}>>([])
+const uploadedFiles = ref<
+  Array<{
+    name: string
+    size: number
+    type: string
+    file: File
+    uploading: boolean
+    uploaded: boolean
+    progress: number
+  }>
+>([])
 
 const errors = ref<Record<string, string>>({})
 
@@ -348,30 +382,32 @@ const priorities = [
   {
     value: 'low',
     label: 'Low',
-    description: 'General questions, minor issues'
+    description: 'General questions, minor issues',
   },
   {
     value: 'medium',
     label: 'Medium',
-    description: 'Standard support requests'
+    description: 'Standard support requests',
   },
   {
     value: 'high',
     label: 'High',
-    description: 'Important issues affecting work'
+    description: 'Important issues affecting work',
   },
   {
     value: 'urgent',
     label: 'Urgent',
-    description: 'Critical issues, system down'
-  }
+    description: 'Critical issues, system down',
+  },
 ]
 
 const isFormValid = computed(() => {
-  return form.value.subject.trim() &&
-         form.value.department &&
-         form.value.priority &&
-         form.value.description.trim()
+  return (
+    form.value.subject.trim() &&
+    form.value.department &&
+    form.value.priority &&
+    form.value.description.trim()
+  )
 })
 
 const getPriorityClass = (priority: string) => {
@@ -469,7 +505,7 @@ const handleFiles = (files: File[]) => {
       file: file,
       uploading: true,
       uploaded: false,
-      progress: 0
+      progress: 0,
     }
 
     uploadedFiles.value.push(fileData)
@@ -524,11 +560,13 @@ const submitTicket = async () => {
 
   try {
     const result = await createTicket({
-      title: form.value.subject,
-      description: form.value.description,
-      priority: form.value.priority,
-      department: form.value.department,
-      subject: form.value.subject
+      variables: {
+        title: form.value.subject,
+        description: form.value.description,
+        priority: form.value.priority,
+        department: form.value.department,
+        subject: form.value.subject,
+      },
     })
 
     if (result && result.data && result.data.createTicket) {

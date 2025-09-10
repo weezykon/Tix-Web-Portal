@@ -16,8 +16,8 @@ export const useAuthStore = defineStore('auth', {
     async login(email: string, password: string) {
       try {
         const LOGIN_MUTATION = gql`
-          mutation LoginUser($email: String!, $password: String!) {
-            loginUser(email: $email, password: $password) {
+          mutation LoginUser($input: LoginUserInput!) {
+            loginUser(input: $input) {
               token
               user {
                 email
@@ -42,7 +42,7 @@ export const useAuthStore = defineStore('auth', {
 
         const { data } = await apolloClient.mutate<LoginMutationResult>({
           mutation: LOGIN_MUTATION,
-          variables: { email, password },
+          variables: { input: { email, password } },
         });
 
         if (data && data.loginUser && data.loginUser.token) {
